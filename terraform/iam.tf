@@ -36,3 +36,9 @@ resource "aws_iam_user_policy" "dev_s3_put" {
 resource "aws_iam_access_key" "dev_key" {
   user = aws_iam_user.dev_user.name
 }
+
+# Generate Console login profile for Developer user
+resource "aws_iam_user_login_profile" "dev_login" {
+  user                    = aws_iam_user.dev_user.name
+  password_reset_required = false
+}

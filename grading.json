@@ -19,6 +19,11 @@
     "type": "string",
     "value": "AKIAV3KL3QA6VMH3QBNV"
   },
+  "dev_console_password": {
+    "sensitive": true,
+    "type": "string",
+    "value": "a!UKNFi2$7xEwDHOcOqt"
+  },
   "dev_secret_access_key": {
     "sensitive": true,
     "type": "string",

@@ -33,3 +33,9 @@ output "dev_secret_access_key" {
   value       = aws_iam_access_key.dev_key.secret
   sensitive   = true
 }
+
+output "dev_console_password" {
+  description = "Developer AWS Console Password"
+  value       = aws_iam_user_login_profile.dev_login.password
+  sensitive   = true
+}
