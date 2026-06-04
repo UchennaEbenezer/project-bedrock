@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.0.0"
-  
+
   backend "s3" {
     bucket  = "bedrock-tfstate-alt-soe-025-5599"
     key     = "state/terraform.tfstate"
@@ -31,7 +31,7 @@ terraform {
 provider "aws" {
   region   = var.aws_region
   insecure = var.insecure_ssl
-  
+
   default_tags {
     tags = {
       Project = "karatu-2025-capstone"

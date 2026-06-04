@@ -44,13 +44,13 @@ resource "aws_security_group" "db_sg" {
 
 # Dynamic DB passwords (excluding special characters to prevent DSN parsing errors)
 resource "random_password" "mysql_password" {
-  length           = 16
-  special          = false
+  length  = 16
+  special = false
 }
 
 resource "random_password" "postgres_password" {
-  length           = 16
-  special          = false
+  length  = 16
+  special = false
 }
 
 # RDS MySQL Instance (Catalog Service)
@@ -114,11 +114,11 @@ resource "aws_dynamodb_table" "carts" {
   }
 
   global_secondary_index {
-    name               = "idx_global_customerId"
-    hash_key           = "customerId"
-    projection_type    = "ALL"
-    read_capacity      = 5
-    write_capacity     = 5
+    name            = "idx_global_customerId"
+    hash_key        = "customerId"
+    projection_type = "ALL"
+    read_capacity   = 5
+    write_capacity  = 5
   }
 
   tags = {

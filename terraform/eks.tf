@@ -161,7 +161,7 @@ resource "aws_eks_access_policy_association" "dev_viewer_policy" {
   principal_arn = aws_iam_user.dev_user.arn
 
   access_scope {
-    type       = "cluster"
+    type = "cluster"
   }
 }
 
@@ -179,7 +179,7 @@ resource "aws_eks_access_policy_association" "admin_creator_policy" {
   principal_arn = data.aws_arn.caller_arn.arn
 
   access_scope {
-    type       = "cluster"
+    type = "cluster"
   }
 }
 
