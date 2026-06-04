@@ -1,0 +1,6 @@
+apiVersion: v2
+name: retail-store-sample-app
+description: A unified Helm chart for InnovateMart's EKS Retail Store Sample App with managed databases
+type: application
+version: 1.0.0
+appVersion: "1.6.1"

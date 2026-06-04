@@ -1,0 +1,18 @@
+# Local terraform files
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.hcl
+*.tfvars
+*.tfvars.json
+
+# Developer credentials and grading outputs
+grading.json
+kubeconfig*
+kubeconfig_*
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db

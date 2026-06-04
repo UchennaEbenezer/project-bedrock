@@ -1,0 +1,29 @@
+# Global settings
+namespace: retail-app
+
+# Images configuration
+images:
+  catalog: "public.ecr.aws/aws-containers/retail-store-sample-catalog:1.6.1"
+  carts: "public.ecr.aws/aws-containers/retail-store-sample-cart:1.6.1"
+  orders: "public.ecr.aws/aws-containers/retail-store-sample-orders:1.6.1"
+  checkout: "public.ecr.aws/aws-containers/retail-store-sample-checkout:1.6.1"
+  ui: "public.ecr.aws/aws-containers/retail-store-sample-ui:1.6.1"
+  assets: "public.ecr.aws/aws-containers/retail-store-sample-assets:0.4.0"
+
+# Database Configuration (Managed RDS MySQL)
+mysql:
+  endpoint: "terraform-2026060416254024770000000c.cszeisa0egmw.us-east-1.rds.amazonaws.com:3306"
+  database: "catalog"
+  username: "dbadmin"
+
+# Database Configuration (Managed RDS PostgreSQL)
+postgres:
+  endpoint: "terraform-2026060416254024870000000d.cszeisa0egmw.us-east-1.rds.amazonaws.com:5432"
+  database: "orders"
+  username: "dbadmin"
+
+# DynamoDB Configuration (Managed DynamoDB Carts Table)
+dynamodb:
+  table: "carts"
+  region: "us-east-1"
+  roleArn: "arn:aws:iam::402275401789:role/project-bedrock-cluster-carts-dynamodb-role"
