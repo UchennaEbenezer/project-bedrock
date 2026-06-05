@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Capstone Submission Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #111;
+        }
+        h1 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        h2 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-left: 5px solid #ccc;
+            overflow-x: auto;
+            font-family: Consolas, Courier, monospace;
+        }
+        code {
+            font-family: Consolas, Courier, monospace;
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Project Bedrock &mdash; EKS Capstone Submission</h1>
+
+    <p>Hey Innocent,</p>
+
+    <p>Here is the complete layout, configuration details, and access paths for the EKS deployment of the AWS Retail Store Sample App (<strong>Project Bedrock</strong>). Everything is deployed in the <code>us-east-1</code> region.</p>
+
+    <h2>1. Resource Tagging</h2>
+    <p>Every AWS resource provisioned by Terraform is automatically tagged at creation. I set this up globally via the provider configuration to prevent missing tags on nested resources:</p>
+    <ul>
+        <li><strong>Key</strong>: <code>Project</code></li>
+        <li><strong>Value</strong>: <code>karatu-2025-capstone</code></li>
+    </ul>
+
+    <h2>2. Git Repository</h2>
+    <p>The repository contains the complete IaC code, app configurations, pipeline workflows, and the required grading schema:</p>
+    <ul>
+        <li><strong>Repo URL</strong>: <a href="https://github.com/UchennaEbenezer/project-bedrock" target="_blank">https://github.com/UchennaEbenezer/project-bedrock</a></li>
+    </ul>
+
+    <h2>3. High-Level Architecture Diagram</h2>
+    <p>This diagram shows how traffic routes from the user through the Application Load Balancer into the private subnets where EKS, RDS MySQL, and RDS PostgreSQL run. It also outlines the S3-to-Lambda event stream:</p>
+
+    <pre>
+                             +------------------------+
+                             |       Public User      |
+                             +-----------+------------+
+                                         |
+                                       HTTPS
+                                         v
+                         +---------------+---------------+
+                         |  AWS Application Load Balancer| (ALB)
+                         +---------------+---------------+
+                                         |
+                                   HTTP (Port 80)
+                                         v
++----------------------------------------+---------------------------------------+
+| VPC: project-bedrock-vpc (10.100.0.0/16)                                       |
+|                                                                                |
+|    +-----------------------------------+----------------------------------+    |
+|    | Private Subnets                                                      |    |
+|    |                                                                      |    |
+|    |   +--------------------------+          +-------------------------+  |    |
+|    |   |    Amazon EKS Cluster    |          | Amazon RDS MySQL        |  |    |
+|    |   | (project-bedrock-cluster)|          | (Catalog Database)      |  |    |
+|    |   |                          |          +-------------------------+  |    |
+|    |   |  +--------------------+  |                                       |    |
+|    |   |  |   ui / assets /    |  |          +-------------------------+  |    |
+|    |   |  |   checkout pods    |  |          | Amazon RDS PostgreSQL   |  |    |
+|    |   |  +---------+----------+  |          | (Orders Database)       |  |    |
+|    |   |            |             |          +-------------------------+  |    |
+|    |   |            v             |                                       |    |
+|    |   |  +--------------------+  |                                       |    |
+|    |   |  | carts service pod  |===========> Amazon DynamoDB               |    |
+|    |   |  +--------------------+  |          (carts Table / GSI Index)    |    |
+|    |   +--------------------------+          +-------------------------+  |    |
+|    +----------------------------------------------------------------------+    |
++--------------------------------------------------------------------------------+
+
+                            +-------------------------+
+                            |     S3 Assets Bucket    |
+                            | (bedrock-assets-alt-    |
+                            |      soe-025-5599)      |
+                            +------------+------------+
+                                         |
+                                 ObjectCreated:Put
+                                         v
+                            +------------+------------+
+                            | AWS Lambda Processor    | ==> Logs to CloudWatch:
+                            | (bedrock-asset-processor)| "Image received: [filename]"
+                            +-------------------------+
+    </pre>
+
+    <h2>4. Deployment &amp; Operations</h2>
+
+    <h3>How to run the pipeline</h3>
+    <ul>
+        <li>The CI/CD pipeline is handled by GitHub Actions (<code>.github/workflows/terraform-ci-cd.yml</code>).</li>
+        <li>Any push or merge to the <code>main</code> branch automatically runs formatting validations and applies the Terraform code.</li>
+        <li>The pipeline connects to AWS using repository secrets <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>.</li>
+    </ul>
+
+    <h3>Running Retail Store URL</h3>
+    <p>The Application Load Balancer routes external traffic directly to the UI frontend:</p>
+    <ul>
+        <li><strong>Frontend URL</strong>: <a href="http://k8s-retailapp-f88f193fe0-1550467655.us-east-1.elb.amazonaws.com" target="_blank">http://k8s-retailapp-f88f193fe0-1550467655.us-east-1.elb.amazonaws.com</a></li>
+    </ul>
+
+    <h2>5. View-Only Developer Credentials (<code>bedrock-dev-view</code>)</h2>
+    <p>These credentials allow programmatic and browser console inspection of EKS and AWS services for verification:</p>
+    <ul>
+        <li><strong>AWS Access Key ID</strong>: <code>AKIAV3KL3QA6VMH3QBNV</code></li>
+        <li><strong>AWS Secret Access Key</strong>: <code>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</code></li>
+        <li><strong>AWS Web Console Login Link</strong>: <a href="https://402275401789.signin.aws.amazon.com/console" target="_blank">https://402275401789.signin.aws.amazon.com/console</a></li>
+        <li><strong>Console Username</strong>: <code>bedrock-dev-view</code></li>
+        <li><strong>Console Password</strong>: <code>a!UKNFi2$7xEwDHOcOqt</code></li>
+    </ul>
+
+    <h2>6. Infrastructure Grading Output (<code>grading.json</code>)</h2>
+    <p>The <code>grading.json</code> file is committed to the root of the repository. It maps the resources and credentials for verification:</p>
+
+<pre>{
+  "assets_bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "bedrock-assets-alt-soe-025-5599"
+  },
+  "cluster_endpoint": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://A7EEDAE0A7C8B0653731BD43D866D106.gr7.us-east-1.eks.amazonaws.com"
+  },
+  "cluster_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "project-bedrock-cluster"
+  },
+  "dev_access_key_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "AKIAV3KL3QA6VMH3QBNV"
+  },
+  "dev_console_password": {
+    "sensitive": true,
+    "type": "string",
+    "value": "a!UKNFi2$7xEwDHOcOqt"
+  },
+  "dev_secret_access_key": {
+    "sensitive": true,
+    "type": "string",
+    "value": "olFiyhFPGJ32/bkLiwbjPkRXccPOWvam88q7BBhT"
+  },
+  "region": {
+    "sensitive": false,
+    "type": "string",
+    "value": "us-east-1"
+  },
+  "vpc_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vpc-06cd47f2a7cf86ed6"
+  }
+}</pre>
+
+</body>
+</html>
